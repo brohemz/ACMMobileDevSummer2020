@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 
 class SliderWidget extends StatefulWidget {
-  final date;
-  const SliderWidget(this.date);
+  double len;
+  SliderWidget({this.len = 20});
+
   @override
-  _SliderWidgetState createState() => _SliderWidgetState(date);
+  _SliderWidgetState createState() => _SliderWidgetState(len);
 }
 
 class Sky extends CustomPainter {
@@ -16,8 +17,6 @@ class Sky extends CustomPainter {
   
   @override
   void paint(Canvas canvas, Size size) {
-    final radius = Math.min(size.width, size.height) / 2;
-    final center = Offset(size.width / 2, size.height / 2);
     final paint = Paint()..color = Colors.blue;
 
     var height = _len;
@@ -39,39 +38,21 @@ class Sky extends CustomPainter {
 
 
 class _SliderWidgetState extends State<SliderWidget> {
-  var date;
-  bool showSlider = false;
-  var _len = 50.0;
-  var _len2 = 50.0;
-  _SliderWidgetState(this.date);
-  
-  List<DateTime> selectedDates = [DateTime.now()];
 
-  // async func
-  Future<Null> _selectTime(BuildContext context) async{
-    var ret = "${selectedDates.first.toLocal()}".split(' ')[1];
+  double _len;
 
-    setState((){
-      date = ret;
-      showSlider = !showSlider;
-    });
-  }
-
+  _SliderWidgetState(this._len);
 
   @override
   Widget build(BuildContext context){
-    List<Widget> ret = new List<Widget>();
-
-    var _y = 0.0;
 
     Widget gest = new GestureDetector(
       onVerticalDragStart: (detail) {
-        _y = detail.globalPosition.dy;
+        _len = detail.localPosition.dy;
       },
       onVerticalDragUpdate: (detail) {
         setState(() {
-          _y = detail.localPosition.dy;
-          _len = _y;
+          _len = detail.localPosition.dy;
           print(_len);
         });
       },
@@ -79,50 +60,16 @@ class _SliderWidgetState extends State<SliderWidget> {
           width: 240,
           height: 120,
           child: CustomPaint(
-            painter: showSlider ?  Sky(_len) : null,
+            painter: Sky(_len),
           )
         )
     );
 
-    ret.add(Padding(
+    Widget ret = (Padding(
       padding: EdgeInsets.all(5),
       child: gest,
     ));
 
-  //TODO: onTap: initialize new boxes
-    
-
-    ret.add(
-      SizedBox(
-          width: 240,
-          height: 120,
-          child: CustomPaint(
-            painter: showSlider ?  Sky(75.0) : null,
-          )
-        )
-    );
-    ret.add(SizedBox(
-          width: 240,
-          height: 120,
-          child: CustomPaint(
-            painter: showSlider ?  Sky(75.0) : null,
-          )
-        )
-    );
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Text(date),
-        MaterialButton(
-          onPressed: () => _selectTime(context),
-          child: Text("Show Slider"),
-        ),
-      ] + ret,
-    );
+    return ret;
   }
-
-
-
-
 }

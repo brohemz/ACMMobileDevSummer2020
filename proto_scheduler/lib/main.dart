@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import './info.dart';
 import './picker.dart';
-import './slider.dart';
+import './timeslider.dart';
 import './session.dart';
 
 void main() {
@@ -72,7 +72,7 @@ class Page extends StatelessWidget {
     return Container(
       child: Column(
         children: [Expanded(child: Column(
-          children: [Text(text), InfoWidget(info), PickerWidget("06/24", "06/27"), SliderWidget("06/22")]
+          children: [Text(text), InfoWidget(info), PickerWidget("06/24", "06/27"), TimeSliderWidget("06/22")]
           )
         )],
       ),
