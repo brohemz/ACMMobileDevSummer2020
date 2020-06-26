@@ -48,7 +48,7 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
           child: Text("Show Slider"),
         ),
         Text(date),
-      ] + ret,
+      ] + (showSlider ? ret : []),
     );
   }
 
