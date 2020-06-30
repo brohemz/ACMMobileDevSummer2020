@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 import './slider.dart';
+import './daymodel.dart';
+import 'package:provider/provider.dart';
 
 class TimeSliderWidget extends StatefulWidget {
   final date;
@@ -12,8 +14,10 @@ class TimeSliderWidget extends StatefulWidget {
 
 class _TimeSliderWidgetState extends State<TimeSliderWidget> {
   var date;
-  bool showSlider = false;
-  var _len = 50.0;
+  bool showSlider = true;
+
+  List<Widget> ret = List<Widget>();
+
   _TimeSliderWidgetState(this.date);
   
   List<DateTime> selectedDates = [DateTime.now()];
@@ -27,18 +31,16 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
       showSlider = !showSlider;
     });
   }
-
+ 
 
   @override
   Widget build(BuildContext context){
-    List<Widget> ret = new List<Widget>();
+    
 
 
   //TODO: onTap: initialize new boxes
-    
 
-    ret += [SliderWidget(len: 75), SliderWidget(len: 40)];
-    
+
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -48,11 +50,35 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
           child: Text("Show Slider"),
         ),
         Text(date),
+        MaterialButton(
+          onPressed: () => _addSlider(),
+          child: Text("tap"),
+        ),
       ] + (showSlider ? ret : []),
     );
   }
 
+  _addSlider(){
+    
+    setState((){
+      ret += [
+        Consumer<DayModel>(
+            builder: (context, model, child) {
+              model.addLen(10);
+              return SliderWidget(len: model.lastLen);
+            }
+        ),
+      ];
+    });
+  } 
 
+  _printSliderVal(int index){
+    Consumer<DayModel>(
+      builder: (context, model, child) {
+        print(model.lenAt(index).toString());
+      }
+    );
+  }
 
 
 }

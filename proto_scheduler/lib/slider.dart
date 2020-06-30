@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 
 class SliderWidget extends StatefulWidget {
-  double len;
-  SliderWidget({this.len = 20});
+  final double len;
+  SliderWidget({this.len = 20.0});
 
   @override
   _SliderWidgetState createState() => _SliderWidgetState(len);
+  
 }
 
 class Sky extends CustomPainter {
@@ -43,6 +44,21 @@ class _SliderWidgetState extends State<SliderWidget> {
 
   _SliderWidgetState(this._len);
 
+  double range_low = 0;
+  double range_high = 240;
+
+  double _clamp(double newLen){
+    double ret = 0;
+    if(newLen < range_low){
+      ret = range_low;
+    }else if(newLen > range_high){
+      ret = range_high;
+    }else{
+      ret = newLen;
+    }
+    return ret;
+  }
+
   @override
   Widget build(BuildContext context){
 
@@ -53,14 +69,13 @@ class _SliderWidgetState extends State<SliderWidget> {
       onVerticalDragUpdate: (detail) {
         setState(() {
           _len = detail.localPosition.dy;
-          print(_len);
         });
       },
       child: SizedBox(
           width: 240,
           height: 120,
           child: CustomPaint(
-            painter: Sky(_len),
+            painter: Sky(_clamp(_len)),
           )
         )
     );
