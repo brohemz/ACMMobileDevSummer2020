@@ -22,6 +22,7 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
   
   List<DateTime> selectedDates = [DateTime.now()];
 
+
   // async func
   Future<Null> _selectTime(BuildContext context) async{
     // var ret = "${selectedDates.first.toLocal()}".split(' ')[1];
@@ -31,6 +32,7 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
       showSlider = !showSlider;
     });
   }
+
  
 
   @override
@@ -40,7 +42,11 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
 
   //TODO: onTap: initialize new boxes
 
-
+    var model = Provider.of<DayModel>(context);
+    if(!model.lens.isEmpty){
+      print(model.lastLen);
+    }
+    
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -54,31 +60,25 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
           onPressed: () => _addSlider(),
           child: Text("tap"),
         ),
+        MaterialButton(
+          onPressed: () => print(model.lenAt(0)),
+          child: Text("print"),
+        )
       ] + (showSlider ? ret : []),
     );
   }
 
   _addSlider(){
-    
     setState((){
       ret += [
         Consumer<DayModel>(
             builder: (context, model, child) {
-              model.addLen(10);
-              return SliderWidget(len: model.lastLen);
+              model.addLen(10.0);
+              return SliderWidget(index: model.lens.length - 1, len: model.lastLen);
             }
         ),
       ];
     });
   } 
-
-  _printSliderVal(int index){
-    Consumer<DayModel>(
-      builder: (context, model, child) {
-        print(model.lenAt(index).toString());
-      }
-    );
-  }
-
 
 }

@@ -27,12 +27,18 @@ class App extends StatelessWidget {
       children: [
         Page(
             'no',
-            'No, you may not!'
-          ),
+            'No, you may not!',
+            ChangeNotifierProvider(
+              create: (context) => DayModel(5),
+              child: TimeSliderWidget("06/22"))
+            ),
         Page(
             'yes',
-            'Yes, you may!'
-          ),
+            'Yes, you may!',
+            ChangeNotifierProvider(
+              create: (context) => DayModel(5),
+              child: TimeSliderWidget("06/24"))
+            ),
       ]
     );
 
@@ -61,27 +67,35 @@ class App extends StatelessWidget {
   }
 }
 
-class Page extends StatelessWidget {
+class Page extends StatefulWidget {
   final text;
   final info;
-  const Page(this.text, this.info);
+  final Widget notifier;
+  Page(this.text, this.info, this.notifier);
+
+  @override
+  _PageState createState() => _PageState(text, info, notifier);
+}
+
+class _PageState extends State<Page> with AutomaticKeepAliveClientMixin<Page> {
+  final _text;
+  final _info;
+  final Widget _notifier;
+  _PageState(this._text, this._info, this._notifier);
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     // TODO: Rebuilds on page flick, needs to keep state
-    Widget ret1 = ChangeNotifierProvider(
-            create: (context) => DayModel(5),
-            child: TimeSliderWidget("06/22"));
-
-    Widget ret2 =  ChangeNotifierProvider(
-            create: (context) => DayModel(5),
-            child: TimeSliderWidget("06/24")); 
+    
     
     return Container(
       child: Column(
         children: [Expanded(child: Column(
-          children: [Text(text), InfoWidget(info), PickerWidget("06/24", "06/27")] + (text == "yes" ? [ret1] : [ret2])),
-        )],
+          children: [Text(_text), InfoWidget(_info), PickerWidget("06/24", "06/27"), _notifier],
+        ))],
     ));
   }
 }

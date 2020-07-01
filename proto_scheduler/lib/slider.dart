@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
+import 'package:provider/provider.dart';
+import './daymodel.dart';
 
 class SliderWidget extends StatefulWidget {
   final double len;
-  SliderWidget({this.len = 20.0});
+  final int index;
+  SliderWidget({this.index, this.len = 20.0});
 
   @override
-  _SliderWidgetState createState() => _SliderWidgetState(len);
+  _SliderWidgetState createState() => _SliderWidgetState(index, len);
   
 }
 
@@ -30,7 +33,7 @@ class Sky extends CustomPainter {
     
     final rect = Rect.fromLTRB(0.0, 0.0, size.width.toDouble(), (height % (size.height.toDouble() + 1)));
     canvas.drawRect(rect, paint);
-    print("length: ${_len}");
+    // print("length: ${_len}");
   }
   
   @override
@@ -38,14 +41,15 @@ class Sky extends CustomPainter {
 }
 
 
-class _SliderWidgetState extends State<SliderWidget> {
+class _SliderWidgetState extends State<SliderWidget>{
 
   double _len;
+  final int _index;
 
-  _SliderWidgetState(this._len);
+  _SliderWidgetState(this._index, this._len);
 
-  double range_low = 0;
-  double range_high = 240;
+  final double range_low = 0;
+  final double range_high = 240;
 
   double _clamp(double newLen){
     double ret = 0;
@@ -62,13 +66,17 @@ class _SliderWidgetState extends State<SliderWidget> {
   @override
   Widget build(BuildContext context){
 
+    var model = Provider.of<DayModel>(context);
+
     Widget gest = new GestureDetector(
       onVerticalDragStart: (detail) {
         _len = detail.localPosition.dy;
+        model.lens[_index] = _len;
       },
       onVerticalDragUpdate: (detail) {
         setState(() {
           _len = detail.localPosition.dy;
+          model.lens[_index] = _len;
         });
       },
       child: SizedBox(
@@ -87,4 +95,6 @@ class _SliderWidgetState extends State<SliderWidget> {
 
     return ret;
   }
+
+
 }

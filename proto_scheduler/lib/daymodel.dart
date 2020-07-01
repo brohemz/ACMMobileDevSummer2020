@@ -1,7 +1,7 @@
 
 import 'package:flutter/foundation.dart';
 
-class DayModel extends ChangeNotifier {
+class DayModel extends ChangeNotifier{
   int _day;
   DayModel(this._day);
   
@@ -35,13 +35,20 @@ class DayModel extends ChangeNotifier {
 
   void addLen(double newLen){
     lens.add(clamp(newLen));
+  }
+
+  operator []=(int i, double val){
+    lens[i] = val;
     notifyListeners();
   }
+  operator [](int i) => lens[i];
 
   double lenAt(int index){
     return lens[index];
   }
 
-  double get lastLen => lens.last;
+  double get lastLen{
+    return lens.last;
+  }
 
 }
