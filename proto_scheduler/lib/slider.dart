@@ -67,16 +67,21 @@ class _SliderWidgetState extends State<SliderWidget>{
   Widget build(BuildContext context){
 
     var model = Provider.of<DayModel>(context);
+    setState((){
+      _len = model[_index];
+      print(_index);
+    });
+    
 
     Widget gest = new GestureDetector(
       onVerticalDragStart: (detail) {
         _len = detail.localPosition.dy;
-        model.lens[_index] = _len;
+        model[_index] = _len;
       },
       onVerticalDragUpdate: (detail) {
         setState(() {
           _len = detail.localPosition.dy;
-          model.lens[_index] = _len;
+          model[_index] = _len;
         });
       },
       child: SizedBox(

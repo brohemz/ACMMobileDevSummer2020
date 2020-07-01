@@ -18,6 +18,8 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
 
   List<Widget> ret = List<Widget>();
 
+  
+
   _TimeSliderWidgetState(this.date);
   
   List<DateTime> selectedDates = [DateTime.now()];
@@ -43,7 +45,7 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
   //TODO: onTap: initialize new boxes
 
     var model = Provider.of<DayModel>(context);
-    if(!model.lens.isEmpty){
+    if(model.lens.isNotEmpty){
       print(model.lastLen);
     }
     
@@ -57,26 +59,23 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
         ),
         Text(date),
         MaterialButton(
-          onPressed: () => _addSlider(),
+          onPressed: () => _addSlider(model),
           child: Text("tap"),
         ),
         MaterialButton(
           onPressed: () => print(model.lenAt(0)),
           child: Text("print"),
-        )
+        ),
       ] + (showSlider ? ret : []),
     );
   }
 
-  _addSlider(){
+  _addSlider(DayModel model){
+    model.addLen(10.0);
+
     setState((){
       ret += [
-        Consumer<DayModel>(
-            builder: (context, model, child) {
-              model.addLen(10.0);
-              return SliderWidget(index: model.lens.length - 1, len: model.lastLen);
-            }
-        ),
+       SliderWidget(index: model.lens.length - 1, len: model.lastLen)
       ];
     });
   } 
