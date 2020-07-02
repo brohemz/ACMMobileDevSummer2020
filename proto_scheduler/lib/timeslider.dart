@@ -59,23 +59,60 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
         ),
         Text(date),
         MaterialButton(
-          onPressed: () => _addSlider(model),
+          onPressed: () => _addSlider(model, 0),
           child: Text("tap"),
         ),
         MaterialButton(
           onPressed: () => print(model.lenAt(0)),
           child: Text("print"),
         ),
-      ] + (showSlider ? ret : []),
+        SizedBox(
+            width: 240,
+            height: 505,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapDown: (details) {
+                if(_isNotOnSlider(model, details.localPosition.dy.toDouble())){
+                  _addSlider(model, details.localPosition.dy.toDouble());
+                  print("GP: " + details.localPosition.dy.toString());
+                }else{
+                  print("ON SLIDER!");
+                }
+               
+              },
+              child: Stack(
+                  children: ret
+                )
+            )
+          )
+        
+      ]
+      // (showSlider ? ret : []),
     );
   }
 
-  _addSlider(DayModel model){
+  bool _isNotOnSlider(DayModel model, double pos){
+    bool ret = true;
+    List<List<double>> ranges = model.getRanges();
+    print(ranges);
+    ranges.forEach((range){
+      if(pos >= range[0] && pos <= range[1]){
+        ret = false;
+      }
+    });
+    return ret;
+  }
+
+  _addSlider(DayModel model, double position){
     model.addLen(10.0);
+    model.addStartPos(position);
 
     setState((){
       ret += [
-       SliderWidget(index: model.lens.length - 1, len: model.lastLen)
+      Positioned(
+        top: position,
+        child: SliderWidget(index: model.lens.length - 1, len: model.lastLen)
+      )
       ];
     });
   } 

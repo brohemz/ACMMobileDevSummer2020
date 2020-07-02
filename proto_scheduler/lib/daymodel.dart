@@ -8,6 +8,7 @@ class DayModel extends ChangeNotifier{
   List<String> times = new List<String>();
   int _number = 0;
   List<double> lens = new List<double>();
+  List<double> startPos = new List<double>();
 
   int get totalTimes => _number;
 
@@ -35,6 +36,22 @@ class DayModel extends ChangeNotifier{
 
   void addLen(double newLen){
     lens.add(clamp(newLen));
+  }
+  
+  void addStartPos(double newLen){
+    startPos.add(newLen);
+  }
+
+  double getStartPos(int index){
+    return startPos[index];
+  }
+
+  List<List<double>> getRanges(){
+    List<List<double>> ret = [];
+    for(var i = 0; i < lens.length; i++){
+      ret.add([startPos[i], startPos[i] + lens[i]]);
+    }
+    return ret;
   }
 
   operator []=(int i, double val){

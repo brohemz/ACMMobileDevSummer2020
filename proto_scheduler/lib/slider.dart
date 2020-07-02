@@ -84,17 +84,25 @@ class _SliderWidgetState extends State<SliderWidget>{
           model[_index] = _len;
         });
       },
+      // child: SizedBox(
+      //     width: 240,
+      //     height: 120,
+      //     child: CustomPaint(
+      //       painter: Sky(_clamp(_len)),
+      //     )
+      //   )
       child: SizedBox(
-          width: 240,
-          height: 120,
-          child: CustomPaint(
-            painter: Sky(_clamp(_len)),
-          )
+        width: 240,
+        height: _clamp(_len),
+        child: CustomPaint(
+          painter: Sky(_clamp(_len))
         )
+      )
+     
     );
 
     Widget ret = (Padding(
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.all(1),
       child: gest,
     ));
 
