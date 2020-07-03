@@ -22,8 +22,8 @@ class _PickerWidgetState extends State<PickerWidget> {
       context: context,
       initialFirstDate: selectedDates.first,
       initialLastDate: selectedDates.first.add(Duration(days: 7)),
-      firstDate: DateTime(2020, 06),
-      lastDate: DateTime(2020, 07));
+      firstDate: DateTime(2020, 07),
+      lastDate: DateTime(2020, 08));
 
     if(picked != null && picked.length >= 2){ 
       setState(() => selectedDates = picked);
