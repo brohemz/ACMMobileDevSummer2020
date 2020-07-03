@@ -21,7 +21,7 @@ class _PickerWidgetState extends State<PickerWidget> {
     final List<DateTime> picked = await DateRangePicker.showDatePicker(
       context: context,
       initialFirstDate: selectedDates.first,
-      initialLastDate: selectedDates.first,
+      initialLastDate: selectedDates.first.add(Duration(days: 7)),
       firstDate: DateTime(2020, 06),
       lastDate: DateTime(2020, 07));
 
