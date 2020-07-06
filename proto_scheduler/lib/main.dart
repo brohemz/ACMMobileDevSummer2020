@@ -6,6 +6,7 @@ import './picker.dart';
 import './timeslider.dart';
 import './session.dart';
 import './daymodel.dart';
+import './contacts.dart';
 
 void main() {
   runApp(App());
@@ -94,7 +95,13 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin<Page> {
     return Container(
       child: Column(
         children: [Expanded(child: Column(
-          children: [Text(_text), InfoWidget(_info), PickerWidget("06/24", "06/27"), _notifier],
+          children: [MaterialButton(
+                      onPressed: () => Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (context) => ContactsView()),
+                      ),
+                      child: Text("Contacts")
+                    ),Text(_text), InfoWidget(_info), PickerWidget("06/24", "06/27"), _notifier],
         ))],
     ));
   }
