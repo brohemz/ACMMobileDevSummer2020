@@ -18,30 +18,6 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var appBarTitle = Text("HOME");
-    final controller = PageController(
-      initialPage: 0,
-    );
-
-    final pageView = PageView(
-      controller: controller,
-      scrollDirection: Axis.horizontal,
-      children: [
-        Page(
-            'no',
-            'No, you may not!',
-            ChangeNotifierProvider(
-              create: (context) => DayModel(5),
-              child: TimeSliderWidget("06/22"))
-            ),
-        Page(
-            'yes',
-            'Yes, you may!',
-            ChangeNotifierProvider(
-              create: (context) => DayModel(5),
-              child: TimeSliderWidget("06/24"))
-            ),
-      ]
-    );
 
     final themeData = ThemeData(
       accentColor: Colors.redAccent,
@@ -58,13 +34,88 @@ class App extends StatelessWidget {
                 title: appBarTitle,
                 centerTitle: true,
               ),
-              body: ChangeNotifierProvider(
-                create: (context) => SessionModel(5),
-                child: pageView
-              ),
+              body: InputSchedule(),
             ),
             theme: themeData,
           );
+  }
+}
+
+class InputSchedule extends StatefulWidget{
+  _InputScheduleState createState() => new _InputScheduleState();
+}
+
+class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveClientMixin<InputSchedule>{
+
+  @override
+  bool get wantKeepAlive => true;
+
+
+  static final pageView = PageView(
+    controller: PageController(initialPage: 0),
+    scrollDirection: Axis.horizontal,
+    children: [
+      Page(
+          'no',
+          'No, you may not!',
+          ChangeNotifierProvider(
+            create: (context) => DayModel(5),
+            child: Center(
+                    child: TimeSliderWidget("07/02")
+                  )
+          )
+      ),
+      Page(
+          'yes',
+          'Yes, you may!',
+          ChangeNotifierProvider(
+                  create: (context) => DayModel(5),
+                  child: Center(
+                    child: TimeSliderWidget("07/04")
+                  )   
+          )
+      )]
+    );
+
+  final sliderView = Scaffold(
+              appBar: AppBar(
+                title: Text("Select Times"),
+                centerTitle: true,
+              ),
+              body: pageView,
+            );
+
+  initState(){
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return ChangeNotifierProvider(
+                create: (context) => SessionModel(5),
+                child: Center(
+                  child: Column(
+                    children:[
+                      Text("\n_DATES_\n"),
+                      PickerWidget("06/24", "06/27"),
+                      MaterialButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => sliderView),
+                        ),
+                        child: Text("Show Slider"),
+                      ),
+                      MaterialButton(
+                        onPressed: () => Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: (context) => ContactsView()),
+                        ),
+                        child: Text("Contacts")
+                      )
+                    ]
+                  )
+                )
+              );
   }
 }
 
@@ -95,13 +146,11 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin<Page> {
     return Container(
       child: Column(
         children: [Expanded(child: Column(
-          children: [MaterialButton(
-                      onPressed: () => Navigator.push(
-                        context, 
-                        MaterialPageRoute(builder: (context) => ContactsView()),
+          children: [ Text("_Date_\n"),
+                      Center(
+                        child: _notifier
                       ),
-                      child: Text("Contacts")
-                    ),Text(_text), InfoWidget(_info), PickerWidget("06/24", "06/27"), _notifier],
+                    ]
         ))],
     ));
   }

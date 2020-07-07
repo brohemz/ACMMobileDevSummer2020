@@ -12,9 +12,12 @@ class TimeSliderWidget extends StatefulWidget {
 }
 
 
-class _TimeSliderWidgetState extends State<TimeSliderWidget> {
+class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepAliveClientMixin<TimeSliderWidget>{
   var date;
   bool showSlider = true;
+
+  @override
+  bool get wantKeepAlive => true;
 
   List<Widget> ret = List<Widget>();
 
@@ -53,10 +56,6 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        MaterialButton(
-          onPressed: () => _selectTime(context),
-          child: Text("Show Slider"),
-        ),
         Text(date),
         MaterialButton(
           onPressed: () => _addSlider(model, 0),
