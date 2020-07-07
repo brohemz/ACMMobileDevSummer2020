@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'dart:math' as Math;
 import './slider.dart';
 import './daymodel.dart';
@@ -16,12 +17,13 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
   var date;
   bool showSlider = true;
 
+  double boxWidth;
+  double boxHeight;
+
   @override
   bool get wantKeepAlive => true;
 
   List<Widget> ret = List<Widget>();
-
-  
 
   _TimeSliderWidgetState(this.date);
   
@@ -37,7 +39,6 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
       showSlider = !showSlider;
     });
   }
-
  
 
   @override
@@ -48,6 +49,9 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
   //TODO: onTap: initialize new boxes
 
     var model = Provider.of<DayModel>(context);
+    boxWidth = model.boxWidth;
+    boxHeight = model.boxHeight;
+
     if(model.lens.isNotEmpty){
       print(model.lastLen);
     }
@@ -62,12 +66,12 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
           child: Text("tap"),
         ),
         MaterialButton(
-          onPressed: () => print(model.lenAt(0)),
+          onPressed: () => print(model.getTimes()),
           child: Text("print"),
         ),
         SizedBox(
-            width: 240,
-            height: 505,
+            width: boxWidth,
+            height: boxHeight,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTapDown: (details) {
@@ -80,7 +84,15 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
                
               },
               child: Stack(
-                  children: ret
+                  children: [
+                    SizedBox(
+                      width: boxWidth,
+                      height: boxHeight,
+                      child: CustomPaint(
+                        painter: TimeSliderPainter(model.getRatio(), 10)
+                      ) 
+                    ) as Widget,
+                  ] + ret
                 )
             )
           )
@@ -108,12 +120,46 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
 
     setState((){
       ret += [
-      Positioned(
-        top: position,
-        child: SliderWidget(index: model.lens.length - 1, len: model.lastLen)
-      )
+        Positioned(
+          top: position,
+          child: SliderWidget(index: model.lens.length - 1, len: model.lastLen, range_high: boxHeight-position)
+        )
       ];
     });
   } 
 
+}
+
+class TimeSliderPainter extends CustomPainter {
+  final double _ratio;
+  final double _hours;
+
+  TimeSliderPainter(this._ratio, this._hours);
+
+  @override
+  void paint(Canvas canvas, Size size){
+    final paintGrey = Paint()..color = Colors.grey;
+    final paintBlack = Paint()..color = Colors.black;
+    final double boxWidth = size.width.toDouble();
+    final double boxHeight = size.height.toDouble();
+
+    final rect = Rect.fromLTRB(0.0, 0.0, boxWidth, boxHeight);
+    canvas.drawRect(rect, paintGrey);
+
+    final double halfHourSample = (_ratio * 30);
+
+    for(int i = 0; i < _hours * 2; i++){
+      Offset p1 = Offset(0, i * halfHourSample);
+      Offset p2 = Offset(40, i * halfHourSample);
+
+      if(i % 2 == 0){
+        p2 = Offset(80, i * halfHourSample);
+      }
+
+      canvas.drawLine(p1, p2, paintBlack);
+    }
+  }
+
+  @override
+  bool shouldRepaint(TimeSliderPainter oldDelegate) => oldDelegate._ratio != _ratio;
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import './info.dart';
 import './picker.dart';
 import './timeslider.dart';
 import './session.dart';
@@ -50,43 +49,49 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
   @override
   bool get wantKeepAlive => true;
 
+  var pageView;
+  var sliderView;
+  int val = 0;
 
-  static final pageView = PageView(
-    controller: PageController(initialPage: 0),
-    scrollDirection: Axis.horizontal,
-    children: [
-      Page(
-          'no',
-          'No, you may not!',
-          ChangeNotifierProvider(
-            create: (context) => DayModel(5),
-            child: Center(
-                    child: TimeSliderWidget("07/02")
-                  )
-          )
-      ),
-      Page(
-          'yes',
-          'Yes, you may!',
-          ChangeNotifierProvider(
-                  create: (context) => DayModel(5),
-                  child: Center(
-                    child: TimeSliderWidget("07/04")
-                  )   
-          )
-      )]
-    );
-
-  final sliderView = Scaffold(
-              appBar: AppBar(
-                title: Text("Select Times"),
-                centerTitle: true,
-              ),
-              body: pageView,
-            );
 
   initState(){
     super.initState();
+
+    setState((){
+      pageView = PageView(
+        controller: PageController(initialPage: 0),
+        scrollDirection: Axis.horizontal,
+        children: [
+          Page(
+              'no',
+              'No, you may not!',
+              ChangeNotifierProvider(
+                create: (context) => DayModel(5, boxWidth: 240, boxHeight: 505),
+                child: Center(
+                        child: TimeSliderWidget("07/02")
+                      )
+              )
+          ),
+          Page(
+              'yes',
+              'Yes, you may!',
+              ChangeNotifierProvider(
+                      create: (context) => DayModel(5, boxWidth: 240, boxHeight: 505),
+                      child: Center(
+                        child: TimeSliderWidget("07/04")
+                      )   
+              )
+          )]
+        );
+
+      sliderView = Scaffold(
+          appBar: AppBar(
+            title: Text("Select Times"),
+            centerTitle: true,
+          ),
+          body: pageView,
+        );
+    });
   }
 
   @override
@@ -101,7 +106,7 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
                       MaterialButton(
                         onPressed: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => sliderView),
+                          MaterialPageRoute(builder: (context) => sliderView, maintainState: true),
                         ),
                         child: Text("Show Slider"),
                       ),
@@ -140,13 +145,13 @@ class _PageState extends State<Page> with AutomaticKeepAliveClientMixin<Page> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Rebuilds on page flick, needs to keep state
+    // TODO: Loses state on navigation
     
     
     return Container(
       child: Column(
         children: [Expanded(child: Column(
-          children: [ Text("_Date_\n"),
+          children: [ Text("\n_Date_\n"),
                       Center(
                         child: _notifier
                       ),

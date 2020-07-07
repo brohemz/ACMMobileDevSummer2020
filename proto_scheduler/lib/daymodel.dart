@@ -2,8 +2,11 @@
 import 'package:flutter/foundation.dart';
 
 class DayModel extends ChangeNotifier{
-  int _day;
-  DayModel(this._day);
+  final int _day;
+  final double range_high;
+  final double boxWidth;
+  final double boxHeight;
+  DayModel(this._day, {this.range_high = 240, this.boxWidth = 240, this.boxHeight = 505});
   
   List<String> times = new List<String>();
   int _number = 0;
@@ -13,7 +16,6 @@ class DayModel extends ChangeNotifier{
   int get totalTimes => _number;
 
   double range_low = 0;
-  double range_high = 240;
 
   double clamp(double newLen){
     double ret = 0;
@@ -46,6 +48,18 @@ class DayModel extends ChangeNotifier{
     return startPos[index];
   }
 
+  // TODO: Add more ranges for time: currently 9 - 7
+  double getRatio(){
+    final double startTime = 9.00;
+    final double endTime = 19.00;
+
+    final double totalHours = endTime - startTime;
+    final double totalMinutes = totalHours * 60;
+    
+    return boxHeight / totalMinutes;
+  }
+
+  // TODO: No Overlap on Drag
   List<List<double>> getRanges(){
     List<List<double>> ret = [];
     for(var i = 0; i < lens.length; i++){
@@ -54,8 +68,21 @@ class DayModel extends ChangeNotifier{
     return ret;
   }
 
+  // TODO: Use range in lieu of lens
+  List<double> getTimes(){
+    List<double> ret = [];
+    
+    final double ratioPerMinute = getRatio();
+    
+    lens.forEach((curLen){
+      ret.add(curLen*ratioPerMinute);
+    });
+
+    return ret;
+  }
+
   operator []=(int i, double val){
-    lens[i] = val;
+    lens[i] = clamp(val);
     notifyListeners();
   }
   operator [](int i) => lens[i];

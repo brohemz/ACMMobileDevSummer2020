@@ -6,50 +6,23 @@ import './daymodel.dart';
 class SliderWidget extends StatefulWidget {
   final double len;
   final int index;
-  SliderWidget({this.index, this.len = 20.0});
+  final double range_high;
+  SliderWidget({this.index, this.len = 20.0, this.range_high});
 
   @override
-  _SliderWidgetState createState() => _SliderWidgetState(index, len);
+  _SliderWidgetState createState() => _SliderWidgetState(index, len, range_high: range_high);
   
 }
-
-class Sky extends CustomPainter {
-
-  final double _len;
-
-  Sky(this._len) : super();
-  
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.blue;
-
-    var height = _len;
-
-    if(_len < 0){
-      height = 0;
-    }else if(_len > size.height.toDouble()){
-      height = size.height.toDouble();
-    }
-    
-    final rect = Rect.fromLTRB(0.0, 0.0, size.width.toDouble(), (height % (size.height.toDouble() + 1)));
-    canvas.drawRect(rect, paint);
-    // print("length: ${_len}");
-  }
-  
-  @override
-  bool shouldRepaint(Sky oldDelegate) => oldDelegate._len != _len;
-}
-
 
 class _SliderWidgetState extends State<SliderWidget>{
 
   double _len;
   final int _index;
+  final double range_high;
 
-  _SliderWidgetState(this._index, this._len);
+  _SliderWidgetState(this._index, this._len, {this.range_high = 240});
 
   final double range_low = 0;
-  final double range_high = 240;
 
   double _clamp(double newLen){
     double ret = 0;
@@ -109,5 +82,32 @@ class _SliderWidgetState extends State<SliderWidget>{
     return ret;
   }
 
+}
 
+
+class Sky extends CustomPainter {
+
+  final double _len;
+
+  Sky(this._len) : super();
+  
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.blue;
+
+    var height = _len;
+
+    if(_len < 0){
+      height = 0;
+    }else if(_len > size.height.toDouble()){
+      height = size.height.toDouble();
+    }
+    
+    final rect = Rect.fromLTRB(0.0, 0.0, size.width.toDouble(), (height % (size.height.toDouble() + 1)));
+    canvas.drawRect(rect, paint);
+    // print("length: ${_len}");
+  }
+  
+  @override
+  bool shouldRepaint(Sky oldDelegate) => oldDelegate._len != _len;
 }
