@@ -15,7 +15,7 @@ class DayModel extends ChangeNotifier{
 
   int get totalTimes => _number;
 
-  double range_low = 0;
+  static const double range_low = 0;
 
   double clamp(double newLen){
     double ret = 0;
@@ -68,18 +68,32 @@ class DayModel extends ChangeNotifier{
     return ret;
   }
 
-  // TODO: Use range in lieu of lens
-  List<double> getTimes(){
-    List<double> ret = [];
+  // TODO: Return DateTime instead
+  // Returns sorted time-ranges for each slider
+  List<List<double>> getTimes(){
+    List<List<double>> ret = [];
+
+    final double startTime = 9.00;
     
-    final double ratioPerMinute = getRatio();
-    
-    lens.forEach((curLen){
-      ret.add(curLen*ratioPerMinute);
+    final double ratioPerMinute = 1 / getRatio();
+
+    List<List<double>> ranges = getRanges();
+
+    ranges.forEach((curRange){
+      final double curLen = curRange[1] - curRange[0];
+
+      final double time = curLen * ratioPerMinute / 60;
+      final double timeOffset = (curRange[0] * ratioPerMinute / 60);
+
+      double adjustedTime = startTime + timeOffset + time;
+
+      ret.add([startTime + timeOffset, adjustedTime]);
+      ret.sort((a, b) => a[0].compareTo(b[0]));
     });
 
     return ret;
   }
+
 
   operator []=(int i, double val){
     lens[i] = clamp(val);
