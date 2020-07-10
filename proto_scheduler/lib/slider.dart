@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 import 'package:provider/provider.dart';
@@ -42,19 +43,19 @@ class _SliderWidgetState extends State<SliderWidget>{
     var model = Provider.of<DayModel>(context);
     setState((){
       _len = model[_index];
-      print(_index);
+      // print(_index);
     });
     
 
     Widget gest = new GestureDetector(
       onVerticalDragStart: (detail) {
         _len = detail.localPosition.dy;
-        model[_index] = _len;
+        model[_index] = _clamp(_len);
       },
       onVerticalDragUpdate: (detail) {
         setState(() {
           _len = detail.localPosition.dy;
-          model[_index] = _len;
+          model[_index] = _clamp(_len);
         });
       },
       // child: SizedBox(

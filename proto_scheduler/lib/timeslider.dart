@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/semantics.dart';
 import 'dart:math' as Math;
 import './slider.dart';
@@ -18,12 +20,15 @@ class TimeSliderWidget extends StatefulWidget {
 class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepAliveClientMixin<TimeSliderWidget>{
   var date;
   bool showSlider = true;
+  bool didAppear = false;
 
   double boxWidth;
   double boxHeight;
 
   @override
   bool get wantKeepAlive => true;
+
+  bool listenToDrag = false;
 
   List<Widget> ret = List<Widget>();
 
@@ -41,7 +46,12 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
       showSlider = !showSlider;
     });
   }
- 
+
+  initState(){
+    super.initState();
+
+    setState(() => didAppear = false);
+  }
 
   @override
   Widget build(BuildContext context){
@@ -56,6 +66,21 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
 
     if(model.lens.isNotEmpty){
       print(model.lastLen);
+    }
+
+
+    // Initialize on reappearance
+    if(!didAppear){
+      if(model.lens.isNotEmpty){
+        model.getRanges().forEach((range){
+          setState((){
+              ret += [Positioned(
+              top: range[0],
+              child: SliderWidget(index: model.lens.length - 1, len: model.lastLen, range_high: boxHeight-range[0])
+              )];
+          });
+        });
+      }
     }
     
 
@@ -80,11 +105,24 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
                 if(_isNotOnSlider(model, details.localPosition.dy.toDouble())){
                   _addSlider(model, details.localPosition.dy.toDouble());
                   print("GP: " + details.localPosition.dy.toString());
+                  setState(() => listenToDrag = true);
                 }else{
                   print("ON SLIDER!");
+                  setState(() => listenToDrag = false);
                 }
-               
               },
+              // Edge case: drag slider on instantiation
+              onVerticalDragUpdate: (detail){
+                if(listenToDrag){
+                  model[model.lens.length - 1] = detail.localPosition.dy.toDouble() - model.startPos[model.lens.length - 1];
+                }
+              },
+              onTapUp: (details){
+                setState(() => listenToDrag = false);
+              },
+              // onVerticalDragUpdate: (detail) {
+              //   model[model.lens.length - 1] = detail.localPosition.dy.toDouble();
+              // },
               child: Stack(
                   children: [
                     SizedBox(

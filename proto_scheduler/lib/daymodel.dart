@@ -7,6 +7,10 @@ class DayModel extends ChangeNotifier{
   final double boxWidth;
   final double boxHeight;
   DayModel(this._day, {this.range_high = 240, this.boxWidth = 240, this.boxHeight = 505});
+
+  static DayModel fromDayModel(DayModel oldModel){
+    return new DayModel(oldModel._day, range_high: oldModel.range_high, boxWidth: oldModel.boxWidth, boxHeight: oldModel.boxHeight);
+  }
   
   List<String> times = new List<String>();
   int _number = 0;

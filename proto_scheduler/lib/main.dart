@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import './picker.dart';
 import './timeslider.dart';
-import './session.dart';
+import './sessionmodel.dart';
 import './daymodel.dart';
 import './contacts.dart';
 
@@ -33,7 +33,10 @@ class App extends StatelessWidget {
                 title: appBarTitle,
                 centerTitle: true,
               ),
-              body: InputSchedule(),
+              body: ChangeNotifierProvider(
+                create: (context) => SessionModel(5),
+                child: InputSchedule(),
+              ),
             ),
             theme: themeData,
           );
@@ -49,78 +52,78 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
   @override
   bool get wantKeepAlive => true;
 
-  var pageView;
-  var sliderView;
   int val = 0;
 
 
   initState(){
     super.initState();
+  }
 
-    setState((){
-      pageView = PageView(
-        controller: PageController(initialPage: 0),
-        scrollDirection: Axis.horizontal,
-        children: [
-          Page(
-              'no',
-              'No, you may not!',
-              ChangeNotifierProvider(
-                create: (context) => DayModel(5, boxWidth: 240, boxHeight: 505),
-                child: Center(
-                        child: TimeSliderWidget("07/02")
-                      )
-              )
-          ),
-          Page(
-              'yes',
-              'Yes, you may!',
-              ChangeNotifierProvider(
-                      create: (context) => DayModel(5, boxWidth: 240, boxHeight: 505),
-                      child: Center(
-                        child: TimeSliderWidget("07/04")
-                      )   
-              )
-          )]
-        );
+  @override
+  Widget build(BuildContext context){
 
-      sliderView = Scaffold(
+    var sessionModel = Provider.of<SessionModel>(context);
+
+    sessionModel.addUser("8435555555", DayModel(2, boxWidth: 240, boxHeight: 505));
+
+    var retMod = sessionModel.getDayModels("8435555555")[0];
+    var retMod2 = sessionModel.getDayModels("8435555555")[1];
+    
+    var pageView = PageView(
+      controller: PageController(initialPage: 0),
+      scrollDirection: Axis.horizontal,
+      children: [
+        Page(
+            'no',
+            'No, you may not!',
+            ChangeNotifierProvider.value(
+              value: retMod,
+              child: Center(
+                      child: TimeSliderWidget("07/02")
+                    )
+            )
+        ),
+        Page(
+            'yes',
+            'Yes, you may!',
+            ChangeNotifierProvider.value(
+              value: retMod2,
+              child: Center(
+                      child: TimeSliderWidget("07/04")
+                    )
+            )
+        )]
+      );
+
+      var sliderView = Scaffold(
           appBar: AppBar(
             title: Text("Select Times"),
             centerTitle: true,
           ),
           body: pageView,
         );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context){
-    return ChangeNotifierProvider(
-                create: (context) => SessionModel(5),
-                child: Center(
-                  child: Column(
-                    children:[
-                      Text("\n_DATES_\n"),
-                      PickerWidget("06/24", "06/27"),
-                      MaterialButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => sliderView, maintainState: true),
-                        ),
-                        child: Text("Show Slider"),
-                      ),
-                      MaterialButton(
-                        onPressed: () => Navigator.push(
-                          context, 
-                          MaterialPageRoute(builder: (context) => ContactsView()),
-                        ),
-                        child: Text("Contacts")
-                      )
-                    ]
-                  )
+    return Center(
+            child: Column(
+              children:[
+                Text("\n_DATES_\n"),
+                PickerWidget("06/24", "06/27"),
+                MaterialButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => sliderView),
+                  ),
+                  child: Text("Show Slider"),
+                ),
+                MaterialButton(
+                  onPressed: () => Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => ContactsView()),
+                  ),
+                  child: Text("Contacts")
                 )
-              );
+              ]
+            )
+          );
   }
 }
 
