@@ -72,7 +72,7 @@ class DayModel extends ChangeNotifier{
     return ret;
   }
 
-  // TODO: Return DateTime instead
+  // TODO: Return DateTime instead - currently in minutes
   // Returns sorted time-ranges for each slider
   List<List<double>> getTimes(){
     List<List<double>> ret = [];
@@ -86,8 +86,8 @@ class DayModel extends ChangeNotifier{
     ranges.forEach((curRange){
       final double curLen = curRange[1] - curRange[0];
 
-      final double time = curLen * ratioPerMinute / 60;
-      final double timeOffset = (curRange[0] * ratioPerMinute / 60);
+      final double time = curLen * ratioPerMinute;
+      final double timeOffset = (curRange[0] * ratioPerMinute);
 
       double adjustedTime = startTime + timeOffset + time;
 
@@ -97,6 +97,7 @@ class DayModel extends ChangeNotifier{
 
     return ret;
   }
+  
 
 
   operator []=(int i, double val){

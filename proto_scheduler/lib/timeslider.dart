@@ -68,20 +68,34 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
       print(model.lastLen);
     }
 
-
+    //DONE: for loop for access to index values on sliderwidget
     // Initialize on reappearance
-    if(!didAppear){
-      if(model.lens.isNotEmpty){
-        model.getRanges().forEach((range){
-          setState((){
-              ret += [Positioned(
-              top: range[0],
-              child: SliderWidget(index: model.lens.length - 1, len: model.lastLen, range_high: boxHeight-range[0])
-              )];
-          });
+    if(!didAppear && model.lens.isNotEmpty){
+      var ranges = model.getRanges();
+      for(int i = 0; i < ranges.length; i++){
+        setState((){
+          ret += [
+            Positioned(
+              top: ranges[i][0],
+              child: SliderWidget(index: i, len: model[i], range_high: boxHeight-ranges[i][0])
+            )
+          ];
         });
       }
     }
+    // if(!didAppear){
+    //   if(model.lens.isNotEmpty){
+    //     var ranges = model.getRanges();
+    //     model.getRanges().forEach((range){
+    //       setState((){
+    //           ret += [Positioned(
+    //           top: range[0],
+    //           child: SliderWidget(index: model.lens.length - 1, len: model.lastLen, range_high: boxHeight-range[0])
+    //           )];
+    //       });
+    //     });
+    //   }
+    // }
     
 
     return Column(

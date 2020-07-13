@@ -9,7 +9,7 @@ class SessionModel extends ChangeNotifier {
   int _numberOfDays;
   SessionModel(this._numberOfDays);
   
-  List<String> times = new List<String>();
+  List<List<List<double>>> times = new List<List<List<double>>>();
   List<String> users = new List<String>();
   HashMap<String, List<DayModel>> models = new HashMap<String, List<DayModel>>();
   int _number = 0;
@@ -26,6 +26,14 @@ class SessionModel extends ChangeNotifier {
 
   List<DayModel> getDayModels(String user){
     return models[user];
+  }
+
+  List<List<List<double>>> getTimes(){
+    models.forEach((key, value) {
+      times.add(value.last.getTimes());
+    });
+
+    return times;
   }
 
 

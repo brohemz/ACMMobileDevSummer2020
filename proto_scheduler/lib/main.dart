@@ -120,7 +120,11 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
                     MaterialPageRoute(builder: (context) => ContactsView()),
                   ),
                   child: Text("Contacts")
-                )
+                ),
+                MaterialButton(
+                  onPressed: () => print(sessionModel.getTimes()),
+                  child: Text("Print Times")
+                ),
               ]
             )
           );
