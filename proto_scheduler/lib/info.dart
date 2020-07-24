@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './session.dart';
+import './sessionmodel.dart';
 
 class InfoWidget extends StatefulWidget {
   final info;

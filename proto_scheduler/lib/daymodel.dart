@@ -2,17 +2,19 @@
 import 'package:flutter/foundation.dart';
 
 class DayModel extends ChangeNotifier{
-  final int _day;
+  final int id;
   final double range_high;
   final double boxWidth;
   final double boxHeight;
-  DayModel(this._day, {this.range_high = 240, this.boxWidth = 240, this.boxHeight = 505});
+  String day;
+
+  DayModel(this.id, {this.day, this.range_high = 240, this.boxWidth = 240, this.boxHeight = 505});
 
   static DayModel fromDayModel(DayModel oldModel){
-    return new DayModel(oldModel._day, range_high: oldModel.range_high, boxWidth: oldModel.boxWidth, boxHeight: oldModel.boxHeight);
+    return new DayModel(oldModel.id, range_high: oldModel.range_high, boxWidth: oldModel.boxWidth, boxHeight: oldModel.boxHeight);
   }
   
-  List<String> times = new List<String>();
+  List<List<double>> times = new List<List<double>>();
   int _number = 0;
   List<double> lens = new List<double>();
   List<double> startPos = new List<double>();
@@ -33,11 +35,8 @@ class DayModel extends ChangeNotifier{
     return ret;
   }
 
-
-  void increment(String time){
-    _number = times.length;
-    times.add(time);
-    notifyListeners();
+  void setDay(String adjustedDate){
+    day = adjustedDate;
   }
 
   void addLen(double newLen){
@@ -50,6 +49,17 @@ class DayModel extends ChangeNotifier{
 
   double getStartPos(int index){
     return startPos[index];
+  }
+
+  void setLensFromTimes(List<List<double>> times){
+    times.forEach((range){
+      final len = (range.last - range.first) * getRatio();
+      final start = range.first * getRatio();
+
+      lens.add(len);
+      startPos.add(start);
+    });
+    notifyListeners();
   }
 
   // TODO: Add more ranges for time: currently 9 - 7
@@ -97,7 +107,7 @@ class DayModel extends ChangeNotifier{
 
     return ret;
   }
-  
+
 
 
   operator []=(int i, double val){

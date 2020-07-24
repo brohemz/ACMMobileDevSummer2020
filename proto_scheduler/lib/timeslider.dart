@@ -17,16 +17,13 @@ class TimeSliderWidget extends StatefulWidget {
 }
 
 
-class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepAliveClientMixin<TimeSliderWidget>{
+class _TimeSliderWidgetState extends State<TimeSliderWidget>{
   var date;
   bool showSlider = true;
   bool didAppear = false;
 
   double boxWidth;
   double boxHeight;
-
-  @override
-  bool get wantKeepAlive => true;
 
   bool listenToDrag = false;
 
@@ -63,6 +60,7 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget> with AutomaticKeepA
     var model = Provider.of<DayModel>(context);
     boxWidth = model.boxWidth;
     boxHeight = model.boxHeight;
+    model.setDay(date);
 
     if(model.lens.isNotEmpty){
       print(model.lastLen);

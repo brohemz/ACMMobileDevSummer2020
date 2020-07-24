@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import './picker.dart';
 import './timeslider.dart';
 import './sessionmodel.dart';
 import './daymodel.dart';
 import './contacts.dart';
+import './login.dart';
 
 void main() {
   runApp(App());
@@ -13,6 +15,7 @@ void main() {
 
 class App extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
 
@@ -34,7 +37,7 @@ class App extends StatelessWidget {
                 centerTitle: true,
               ),
               body: ChangeNotifierProvider(
-                create: (context) => SessionModel(5),
+                create: (context) => new SessionModel(2, uid: "b1mV01FG7BvXKcReUROp"),
                 child: InputSchedule(),
               ),
             ),
@@ -59,15 +62,46 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
     super.initState();
   }
 
+  _submitSession(BuildContext context){
+
+    final sessionModel = Provider.of<SessionModel>(context, listen: false);
+    final times = sessionModel.getTimes();
+
+    DocumentReference ref = Firestore.instance.collection("joined-sessions").document("${sessionModel.uid}_8437098010");
+
+    ref.get().then((val) => print(val.data));
+
+    print(times);
+
+    var dayArr = [];
+    times.forEach((day){
+      var dayObject = {"times": []};
+      day.forEach((curRange){
+        dayObject["times"].add({
+            "min": curRange.first,
+            "max": curRange.last
+          });
+      });
+      dayArr.add(dayObject);
+    });
+
+    var submitObject = {
+      "days": dayArr,
+    };
+
+    ref.setData(submitObject);
+
+    print(submitObject);
+  }
+
   @override
   Widget build(BuildContext context){
 
     var sessionModel = Provider.of<SessionModel>(context);
 
-    sessionModel.addUser("8435555555", DayModel(2, boxWidth: 240, boxHeight: 505));
+    // sessionModel.setModelType(DayModel(2, boxWidth: 240, boxHeight: 505));
 
-    var retMod = sessionModel.getDayModels("8435555555")[0];
-    var retMod2 = sessionModel.getDayModels("8435555555")[1];
+    print(sessionModel.getDayModels());
     
     var pageView = PageView(
       controller: PageController(initialPage: 0),
@@ -77,7 +111,7 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
             'no',
             'No, you may not!',
             ChangeNotifierProvider.value(
-              value: retMod,
+              value: sessionModel.getDayModels()[0],
               child: Center(
                       child: TimeSliderWidget("07/02")
                     )
@@ -87,7 +121,7 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
             'yes',
             'Yes, you may!',
             ChangeNotifierProvider.value(
-              value: retMod2,
+              value: sessionModel.getDayModels()[1],
               child: Center(
                       child: TimeSliderWidget("07/04")
                     )
@@ -125,6 +159,17 @@ class _InputScheduleState extends State<InputSchedule> with AutomaticKeepAliveCl
                   onPressed: () => print(sessionModel.getTimes()),
                   child: Text("Print Times")
                 ),
+                MaterialButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginView()),
+                  ),
+                  child: Text("Show Login"),
+                ),
+                FlatButton(
+                  onPressed: () => _submitSession(context),
+                  child: Text("Submit"),
+                )
               ]
             )
           );
