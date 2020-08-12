@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1056613828019",
+    "firebase_url": "https://meeting-scheduler-b2ef4.firebaseio.com",
+    "project_id": "meeting-scheduler-b2ef4",
+    "storage_bucket": "meeting-scheduler-b2ef4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056613828019:android:5c6619458b07a40eaa37c6",
+        "android_client_info": {
+          "package_name": "com.brohemz.meeting_scheduler.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056613828019-slndh8u89586v09hfppde9fgskp1v00q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwy1XYDMGX0eDVMBmjmAbFsWKRTRAL0kM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056613828019-slndh8u89586v09hfppde9fgskp1v00q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1056613828019-doh2slqqk10ddlrpd4u16er57st9ons9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.acmsummerdev2020.meeting-scheduler"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

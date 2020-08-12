@@ -62,9 +62,9 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget>{
     boxHeight = model.boxHeight;
     model.setDay(date);
 
-    if(model.lens.isNotEmpty){
-      print(model.lastLen);
-    }
+    // if(model.lens.isNotEmpty){
+    //   print(model.lastLen);
+    // }
 
     //DONE: for loop for access to index values on sliderwidget
     // Initialize on reappearance
@@ -101,10 +101,6 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget>{
       children: <Widget>[
         Text(date),
         MaterialButton(
-          onPressed: () => _addSlider(model, 0),
-          child: Text("tap"),
-        ),
-        MaterialButton(
           onPressed: () => print(model.getTimes()),
           child: Text("print"),
         ),
@@ -113,7 +109,7 @@ class _TimeSliderWidgetState extends State<TimeSliderWidget>{
             height: boxHeight,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onTapDown: (details) {
+              onVerticalDragDown: (details) {
                 if(_isNotOnSlider(model, details.localPosition.dy.toDouble())){
                   _addSlider(model, details.localPosition.dy.toDouble());
                   print("GP: " + details.localPosition.dy.toString());

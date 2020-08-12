@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,62 +12,117 @@ class LoginView extends StatelessWidget{
   Future<FirebaseUser> _handleSignIn(String phone, BuildContext context) async{
 
     final _signIn = (AuthResult result){
+      final userDoc = Firestore.instance.collection("users").document(phone);
+      
+      userDoc.get().then((DocumentSnapshot doc){
+        if(!doc.exists){
+          userDoc.setData({ 'email': null, 'verified': true, 'recent_sessions': []});
+        }
+      });
+      
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => App()));
 
       print("Signing in...");
       return result.user;
     };
 
+    final _verificationCompleted = (AuthCredential credential){
+      _auth.signInWithCredential(credential).then(_signIn);
+    };
+
+    final _verificationFailed = (AuthException ex) => print(ex.code);
+
+    final _codeSent = (String verificationID, [int forceResendingToken]){
+      final _codeController = TextEditingController();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Enter Code"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(controller: _codeController)
+            ]
+          ),
+          actions: [
+            FlatButton(
+              onPressed:(){
+                Navigator.pop(context);
+                var smsCode = _codeController.text.trim();
+                
+                var _credential = PhoneAuthProvider.getCredential(verificationId: verificationID, smsCode: smsCode);
+
+                _auth.signInWithCredential(_credential).then(_signIn);
+              },
+              child: Text("Done"),
+            )
+          ]
+        )
+      );
+    };
+
+    final _codeAutoRetrievalTimeout = (String verificationID){
+        print(verificationID);
+        print("Timeout");
+    };
+
     _auth.verifyPhoneNumber(
       phoneNumber: phone, 
       timeout: Duration(seconds: 60), 
-      verificationCompleted: (AuthCredential credential){
-        _auth.signInWithCredential(credential).then(_signIn);
-      }, 
-      verificationFailed: (AuthException ex) => print(ex.code), 
-      codeSent: (String verificationID, [int forceResendingToken]){
-        final _codeController = TextEditingController();
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Enter Code"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(controller: _codeController)
-              ]
-            ),
-            actions: [
-              FlatButton(
-                onPressed:(){
-                  var smsCode = _codeController.text.trim();
-                  
-                  var _credential = PhoneAuthProvider.getCredential(verificationId: verificationID, smsCode: smsCode);
+      verificationCompleted: _verificationCompleted, 
+      verificationFailed: _verificationFailed, 
+      codeSent: _codeSent, 
+      codeAutoRetrievalTimeout: _codeAutoRetrievalTimeout
+    );
 
-                  _auth.signInWithCredential(_credential).then(_signIn);
-                },
-                child: Text("Done"),
-              )
-            ]
-          )
-        );
-      }, 
-      codeAutoRetrievalTimeout: (String verificationId){
-        verificationId = verificationId;
-        print(verificationId);
-        print("Timeout");
-      });
   }
 
   _loginAction(BuildContext context) async {
 
-    Future<FirebaseUser> user = _handleSignIn("+1 843-709-8010", context);
+    final _phoneController = TextEditingController();
+
+    final retVal = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text("Choose Phone"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CupertinoButton.filled(
+              padding: EdgeInsets.all(15),
+              
+              child: Text("User 1"),
+              onPressed: () => _phoneController.text = "+18437098010",
+            ),
+            Container(
+              height: 50
+            ),
+            CupertinoButton.filled(
+              padding: EdgeInsets.all(15),
+              child: Text("User 2"),
+              onPressed: () => _phoneController.text = "+18437095882"
+            ),
+          ]
+        ),
+        actions: [
+          FlatButton(
+            child: Text("Continue"),
+            onPressed: (){
+              Navigator.pop(context, _phoneController.text);
+            }
+          )
+        ]
+      ),
+    );
+
+    Future<FirebaseUser> user = _handleSignIn(retVal, context);
 
     user.then((currentUser) => print("${currentUser != null ? currentUser.phoneNumber : "No user signed in"}"));
 
     // user.then((user) => print("wow: ${user.displayName}"));
 
-    // DocumentReference ref = Firestore.instance.collection("users").document("8437098010");
+    // DocumentReference ref = Firestore.instance.collection("users").document("+18437098010");
 
     // ref.get().then((value) => print(value.data));
 

@@ -3,12 +3,11 @@ import 'package:flutter/foundation.dart';
 
 class DayModel extends ChangeNotifier{
   final int id;
+  String day;
   final double range_high;
   final double boxWidth;
   final double boxHeight;
-  String day;
-
-  DayModel(this.id, {this.day, this.range_high = 240, this.boxWidth = 240, this.boxHeight = 505});
+  DayModel(this.id, {this.day = "No Date Selected", this.range_high = 240, this.boxWidth = 240, this.boxHeight = 505});
 
   static DayModel fromDayModel(DayModel oldModel){
     return new DayModel(oldModel.id, range_high: oldModel.range_high, boxWidth: oldModel.boxWidth, boxHeight: oldModel.boxHeight);
@@ -35,6 +34,11 @@ class DayModel extends ChangeNotifier{
     return ret;
   }
 
+  void clear(){
+    lens = [];
+    startPos = [];
+  }
+
   void setDay(String adjustedDate){
     day = adjustedDate;
   }
@@ -58,6 +62,7 @@ class DayModel extends ChangeNotifier{
 
       lens.add(len);
       startPos.add(start);
+      // print("lenFromTime: $range");
     });
     notifyListeners();
   }
@@ -82,12 +87,10 @@ class DayModel extends ChangeNotifier{
     return ret;
   }
 
-  // TODO: Return DateTime instead - currently in minutes
+  // TODO: update with start/end times
   // Returns sorted time-ranges for each slider
   List<List<double>> getTimes(){
     List<List<double>> ret = [];
-
-    final double startTime = 9.00;
     
     final double ratioPerMinute = 1 / getRatio();
 
@@ -99,10 +102,11 @@ class DayModel extends ChangeNotifier{
       final double time = curLen * ratioPerMinute;
       final double timeOffset = (curRange[0] * ratioPerMinute);
 
-      double adjustedTime = startTime + timeOffset + time;
+      double adjustedTime = timeOffset + time;
 
-      ret.add([startTime + timeOffset, adjustedTime]);
+      ret.add([timeOffset, adjustedTime]);
       ret.sort((a, b) => a[0].compareTo(b[0]));
+      // print("time: ${timeOffset}");
     });
 
     return ret;

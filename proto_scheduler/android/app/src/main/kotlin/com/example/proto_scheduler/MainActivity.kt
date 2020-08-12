@@ -1,4 +1,4 @@
-package com.example.proto_scheduler
+package com.brohemz.meeting_scheduler.android
 
 import io.flutter.embedding.android.FlutterActivity
 
